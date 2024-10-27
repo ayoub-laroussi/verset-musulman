@@ -13,7 +13,7 @@ const RandomImageWithAudio = () => {
             const folderRefs = await listAll(rootRef); // Liste tous les dossiers à la racine
             const allMedia = [];
 
-            for (let folderRef of folderRefs.prefixes) { // `prefixes` contient les sous-dossiers
+            for (let folderRef of folderRefs.prefixes) { // prefixes contient les sous-dossiers
                 const folderMedia = await fetchMediaFromFolder(folderRef);
                 allMedia.push(...folderMedia);
             }
@@ -57,7 +57,7 @@ const RandomImageWithAudio = () => {
             <div className="bg-slate-300 shadow-lg p-8 flex justify-center items-center flex-col">
                 <h1 className="text-gray-800 text-bold mb-4">Verset du Coran</h1>
                 {current.image && (
-                    <img src={current.image} alt="Verset aléatoire" className="w-64 h-64 object-cover" />
+                    <img src={current.image} alt="Verset aléatoire" className="w-128 h-128 object-cover" />
                 )}
                 {current.audio && (
                     <audio controls src={current.audio} className="mt-4">
