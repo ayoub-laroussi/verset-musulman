@@ -1,53 +1,72 @@
 import { useState, useEffect } from "react";
 import { storage } from './firebaseConfig.js';
 import { ref, listAll, getDownloadURL } from "firebase/storage";
-import "./index.css"
 
-const RandomImage = () => {
-    const [images, setImages] = useState([]);
-    const [image, setImage] = useState("");
+const RandomImageWithAudio = () => {
+    const [media, setMedia] = useState([]);
+    const [current, setCurrent] = useState({ image: "", audio: null });
     const [lastIndex, setLastIndex] = useState(null);
 
     useEffect(() => {
-        const fetchImages = async () => {
-            const imagesRef = ref(storage, 'images'); // Chemin du dossier dans Firebase Storage
-            const imageRefs = await listAll(imagesRef);
+        const fetchAllMedia = async () => {
+            const rootRef = ref(storage, ''); // Référence de la racine du storage
+            const folderRefs = await listAll(rootRef); // Liste tous les dossiers à la racine
+            const allMedia = [];
 
-            const urls = await Promise.all(
-                imageRefs.items.map((itemRef) => getDownloadURL(itemRef))
-            );
+            for (let folderRef of folderRefs.prefixes) { // `prefixes` contient les sous-dossiers
+                const folderMedia = await fetchMediaFromFolder(folderRef);
+                allMedia.push(...folderMedia);
+            }
 
-            setImages(urls);
+            setMedia(allMedia);
         };
 
-        fetchImages();
+        const fetchMediaFromFolder = async (folderRef) => {
+            const files = await listAll(folderRef);
+            const images = [];
+            let audioUrl = null;
+
+            for (let file of files.items) {
+                const fileUrl = await getDownloadURL(file);
+                if (file.name.endsWith('.mp3')) {
+                    audioUrl = fileUrl; // le son associé à toutes les images de ce dossier
+                } else {
+                    images.push({ image: fileUrl, audio: audioUrl });
+                }
+            }
+            return images;
+        };
+
+        fetchAllMedia();
     }, []);
 
-    // Sélectionner une image au hasard une fois les URLs chargées
     useEffect(() => {
-        if (images.length > 0) { // Vérifier si les images sont chargées
+        if (media.length > 0) {
             let randomIndex;
-
-            // Assurer que le nouvel index est différent du dernier
             do {
-                randomIndex = Math.floor(Math.random() * images.length);
+                randomIndex = Math.floor(Math.random() * media.length);
             } while (randomIndex === lastIndex);
 
-            setImage(images[randomIndex]);
+            setCurrent(media[randomIndex]);
             setLastIndex(randomIndex);
         }
-    }, [images]);
+    }, [media]);
 
     return (
-        <main className="bg-emerald-50 h-screen flex items-center justify-center">
-            <div className="bg-emerald-900 shadow-lg p-8 flex justify-center items-center flex-col">
-                <h1 className="font-bold text-emerald-100 mb-4">Image du jour</h1>
-                {image && (
-                    <img src={image} alt="Image aléatoire" className="w-128  max-h-1xl object-cover" />
+        <main className="bg-slate-50 h-screen flex items-center justify-center">
+            <div className="bg-slate-300 shadow-lg p-8 flex justify-center items-center flex-col">
+                <h1 className="text-gray-800 text-bold mb-4">Verset du Coran</h1>
+                {current.image && (
+                    <img src={current.image} alt="Verset aléatoire" className="w-64 h-64 object-cover" />
+                )}
+                {current.audio && (
+                    <audio controls src={current.audio} className="mt-4">
+                        Votre navigateur ne supporte pas lélément audio.
+                    </audio>
                 )}
             </div>
         </main>
     );
 };
 
-export default RandomImage;
+export default RandomImageWithAudio;
