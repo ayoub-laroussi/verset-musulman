@@ -43,10 +43,9 @@ const RandomImage = () => {
                 {/* Icône placée avant l'image principale */}
                 <a href="https://noor-iqra.fr/">
                     <figure className="w-32">
-                        <img src="https://raw.githubusercontent.com/ayoub-laroussi/verset-musulman/8b4a53926814c1694075a0f687a8ddc6f7d0866a/src/assets/NoorB.svg" alt="Logo"/>
+                        <img src="/public/noorban.png" alt="Logo"/>
                     </figure>
                 </a>
-
                 {/* Image principale */}
                 {image && (
                     <figure>
