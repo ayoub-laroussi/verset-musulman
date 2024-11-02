@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { storage } from './firebaseConfig.js';
 import { ref, listAll, getDownloadURL } from "firebase/storage";
-import NoorLogo from "public/Noor-2.svg";
 
 const RandomImage = () => {
     const [images, setImages] = useState([]);
@@ -44,7 +43,7 @@ const RandomImage = () => {
                 {/* Icône placée avant l'image principale */}
                 <a href="https://noor-iqra.fr/">
                     <figure className="w-200 h-200">
-                        <img src={NoorLogo} alt="Logo"/>
+                        <img src="gs://noor-du-jour.appspot.com/logo/NoorB.svg" alt="Logo"/>
                     </figure>
                 </a>
 
