@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { storage } from './firebaseConfig.js';
 import { ref, listAll, getDownloadURL } from "firebase/storage";
+import NoorLogo from "public/Noor-2.svg";
 
 const RandomImage = () => {
     const [images, setImages] = useState([]);
@@ -24,10 +25,9 @@ const RandomImage = () => {
 
     // Sélectionner une image au hasard une fois les URLs chargées
     useEffect(() => {
-        if (images.length > 0) { // Vérifier si les images sont chargées
+        if (images.length > 0) {
             let randomIndex;
 
-            // Assurer que le nouvel index est différent du dernier
             do {
                 randomIndex = Math.floor(Math.random() * images.length);
             } while (randomIndex === lastIndex);
@@ -35,7 +35,8 @@ const RandomImage = () => {
             setImage(images[randomIndex]);
             setLastIndex(randomIndex);
         }
-    }, [images]);
+    }, [images, lastIndex]);
+
 
     return (
         <main>
@@ -43,7 +44,7 @@ const RandomImage = () => {
                 {/* Icône placée avant l'image principale */}
                 <a href="https://noor-iqra.fr/">
                     <figure className="w-200 h-200">
-                        <img src="public/Noor-2.svg" alt="Logo"/>
+                        <img src={NoorLogo} alt="Logo"/>
                     </figure>
                 </a>
 
