@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { storage } from './firebaseConfig.js';
-import { ref, listAll, getDownloadURL } from "firebase/storage";
 
 const RandomImage = () => {
     const [images, setImages] = useState([]);
@@ -9,24 +8,22 @@ const RandomImage = () => {
 
     useEffect(() => {
         const fetchImages = async () => {
-            const imagesRef = ref(storage, 'images'); // Chemin du dossier dans Firebase Storage
-            const imageRefs = await listAll(imagesRef);
+            const imagesRef = storage.ref().child('images'); // Chemin du dossier dans Firebase Storage
+            const imageRefs = await imagesRef.listAll();
 
             const urls = await Promise.all(
-                imageRefs.items.map((itemRef) => getDownloadURL(itemRef))
+                imageRefs.items.map((itemRef) => itemRef.getDownloadURL())
             );
 
             setImages(urls);
         };
 
         fetchImages();
-    }, []);
+    }, []); // Exécuter uniquement au premier rendu
 
-    // Sélectionner une image au hasard une fois les URLs chargées
     useEffect(() => {
         if (images.length > 0) {
             let randomIndex;
-
             do {
                 randomIndex = Math.floor(Math.random() * images.length);
             } while (randomIndex === lastIndex);
@@ -34,7 +31,7 @@ const RandomImage = () => {
             setImage(images[randomIndex]);
             setLastIndex(randomIndex);
         }
-    }, [images, lastIndex]);
+    }, [images]); // Ce useEffect se déclenche seulement lorsque `images` est modifié
 
 
     return (
