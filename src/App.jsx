@@ -40,7 +40,7 @@ const RandomImage = () => {
                 {/* Icône placée avant l'image principale */}
                 <a href="https://noor-iqra.fr/">
                     <figure className="w-32">
-                        <img src="/public/noorban.png" alt="Logo"/>
+                        <img src="/logo/noorban.png" alt="Logo"/>
                     </figure>
                 </a>
                 {/* Image principale */}
