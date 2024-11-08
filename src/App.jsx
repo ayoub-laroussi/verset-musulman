@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { storage } from './firebaseConfig.js';
+import { ref, listAll, getDownloadURL } from "firebase/storage";
+
 
 const RandomImage = () => {
     const [images, setImages] = useState([]);
@@ -8,15 +10,21 @@ const RandomImage = () => {
 
     useEffect(() => {
         const fetchImages = async () => {
-            const imagesRef = storage.ref().child('images'); // Chemin du dossier dans Firebase Storage
-            const imageRefs = await imagesRef.listAll();
+            try {
+                const imagesRef = ref(storage, 'images'); // Utilise `ref` pour le dossier "images"
+                const imageRefs = await listAll(imagesRef);
 
-            const urls = await Promise.all(
-                imageRefs.items.map((itemRef) => itemRef.getDownloadURL())
-            );
+                const urls = await Promise.all(
+                    imageRefs.items.map((itemRef) => getDownloadURL(itemRef))
+                );
 
-            setImages(urls);
+                console.log("Images chargées :", urls); // Debug : vérifier les images récupérées
+                setImages(urls);
+            } catch (error) {
+                console.error("Erreur lors du chargement des images :", error);
+            }
         };
+
 
         fetchImages();
     }, []); // Exécuter uniquement au premier rendu
