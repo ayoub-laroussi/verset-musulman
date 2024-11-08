@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { storage } from './firebaseConfig.js';
-import { ref, listAll, getDownloadURL } from "firebase/storage";
-
 
 const RandomImage = () => {
     const [images, setImages] = useState([]);
@@ -10,21 +8,15 @@ const RandomImage = () => {
 
     useEffect(() => {
         const fetchImages = async () => {
-            try {
-                const imagesRef = ref(storage, 'images'); // Utilise `ref` pour le dossier "images"
-                const imageRefs = await listAll(imagesRef);
+            const imagesRef = storage.ref().child('images'); // Chemin du dossier dans Firebase Storage
+            const imageRefs = await imagesRef.listAll();
 
-                const urls = await Promise.all(
-                    imageRefs.items.map((itemRef) => getDownloadURL(itemRef))
-                );
+            const urls = await Promise.all(
+                imageRefs.items.map((itemRef) => itemRef.getDownloadURL())
+            );
 
-                console.log("Images chargées :", urls); // Debug : vérifier les images récupérées
-                setImages(urls);
-            } catch (error) {
-                console.error("Erreur lors du chargement des images :", error);
-            }
+            setImages(urls);
         };
-
 
         fetchImages();
     }, []); // Exécuter uniquement au premier rendu
@@ -48,7 +40,7 @@ const RandomImage = () => {
                 {/* Icône placée avant l'image principale */}
                 <a href="https://noor-iqra.fr/">
                     <figure className="w-32">
-                        <img src="../public/noorban.png" alt="Logo"/>
+                        <img src="/public/noorban.png" alt="Logo"/>
                     </figure>
                 </a>
                 {/* Image principale */}
